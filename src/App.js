@@ -5,10 +5,8 @@ import Navigations from './Components/AppBar';
 function App() {
   return (
     <>
-    <Navigations/>
     <Translator/>
     </>
-
   );
 }
 
