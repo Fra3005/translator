@@ -17,7 +17,7 @@ export default function Navigations() {
             sx={{ mr: 2 }}
           ></IconButton>
           <Typography variant="h6" color="inherit" component="div">
-            Traduttore
+            Translator (Max 20 characthers to minute)
           </Typography>
         </Toolbar>
       </AppBar>

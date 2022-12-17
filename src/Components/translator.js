@@ -4,7 +4,6 @@ import { TextField, Button, CardActionArea, CardActions } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,25 +11,61 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import Navigations from "./AppBar";
+import Alert from '@mui/material/Alert';
+
 export default function Translator() {
   const [input, setInput] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
-
+  const [detectedLanguage, setDetectedLanguage] = useState("");
+  const [translation, setTranslation] = useState("");
+  const [selectLanguage, setSelectedLanguage] = useState("en");
+  const [selectLanguageOut, setSelectedLanguageOut] = useState("it");
 
   const detectLanguage = async () => {
-    const response = await axios
-      .post(`https://libretranslate.de/detect`, {
-        q: input,
-      });
-      
-      setSelectedLanguage(response.data[0].language);
-     
+    const response = await axios.post(`https://libretranslate.de/detect`, {
+      q: input,
+    });
+
+    setSelectedLanguage(response.data[0].language);
+    setDetectedLanguage(response.data[0].language);
   };
 
+  const translateSentences = async () => {
+    const response = await axios.post(`https://libretranslate.de/translate`, {
+      q: input,
+      source: selectLanguage,
+      target: selectLanguageOut,
+    });
+
+    setTranslation(response.data.translatedText);
+  };
+
+  const handleChangeInput = (e) => {
+    setSelectedLanguage(e.target.value);
+  };
+
+  const handleChangeOutput = (e) => {
+    setSelectedLanguageOut(e.target.value);
+  };
 
   useEffect(() => {
-    detectLanguage();
+    detectLanguage().then(translateSentences());
   }, [input]);
+
+  useEffect(() => {
+    translateSentences();
+  }, [selectLanguageOut]);
+
+  useEffect(() => {
+    translateSentences();
+  }, [selectLanguage]);
+
+  useEffect(()=>{
+
+    if(detectLanguage != selectLanguage){
+      <Alert severity="info">This is an info alert — check it out!</Alert>
+    }
+
+  },[input, translation]);
 
   return (
     <>
@@ -38,6 +73,9 @@ export default function Translator() {
       <div></div>
       <Box>
         <Grid container spacing={1} columns={16}>
+          <Grid item xs={12}></Grid>
+          <Grid item xs={12}></Grid>
+          <Grid item xs={12}></Grid>
           <Grid item xs={8}>
             <Card sx={{ maxWidth: 600 }}>
               <CardActionArea>
@@ -48,23 +86,20 @@ export default function Translator() {
                   alt="green iguana"
                 />
                 <CardContent>
-                  <FormControl sx={{ m: 1 }} variant="standard">
-                    <InputLabel id="demo-customized-select-label"></InputLabel>
+                  <FormControl sx={{ m: 3 }} variant="standard">
                     <Select
                       labelId="demo-customized-select-label"
                       id="demo-customized-select"
+                      value={selectLanguage}
+                      onChange={handleChangeInput}
                     >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
+                      <MenuItem value={"it"}>it</MenuItem>
+                      <MenuItem value={"en"}>en</MenuItem>
+                      <MenuItem value={"de"}>de</MenuItem>
                     </Select>
                   </FormControl>
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
                     variant="outlined"
                     value={input}
                     onChange={(e) => {
@@ -89,25 +124,26 @@ export default function Translator() {
                   alt="green iguana"
                 />
                 <CardContent>
-                  <FormControl sx={{ m: 1 }} variant="standard">
+                  <FormControl sx={{ m: 2 }} variant="standard">
                     <InputLabel id="demo-customized-select-label"></InputLabel>
                     <Select
                       labelId="demo-customized-select-label"
                       id="demo-customized-select"
+                      value={selectLanguageOut}
+                      onChange={handleChangeOutput}
                     >
-                      <MenuItem value="">
-                        <em>None</em>
+                      <MenuItem value={"it"} defaultChecked>
+                        it
                       </MenuItem>
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
+                      <MenuItem value={"en"}>en</MenuItem>
+                      <MenuItem value={"de"}>de</MenuItem>
                     </Select>
                   </FormControl>
                   <TextField
                     id="outlined-basic"
                     label=""
                     variant="outlined"
-                    value={selectedLanguage}
+                    value={translation}
                     multiline
                     rows={4}
                     fullWidth
