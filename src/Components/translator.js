@@ -11,7 +11,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import Navigations from "./AppBar";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 
 export default function Translator() {
   const [input, setInput] = useState("");
@@ -19,6 +19,8 @@ export default function Translator() {
   const [translation, setTranslation] = useState("");
   const [selectLanguage, setSelectedLanguage] = useState("en");
   const [selectLanguageOut, setSelectedLanguageOut] = useState("it");
+  const [api, setApi] = useState(null);
+  const [country, setCountry] = useState("Italy");
 
   const detectLanguage = async () => {
     const response = await axios.post(`https://libretranslate.de/detect`, {
@@ -27,6 +29,10 @@ export default function Translator() {
 
     setSelectedLanguage(response.data[0].language);
     setDetectedLanguage(response.data[0].language);
+  };
+
+  const url = {
+    countries: "https://disease.sh/v3/covid-19/countries/",
   };
 
   const translateSentences = async () => {
@@ -59,13 +65,11 @@ export default function Translator() {
     translateSentences();
   }, [selectLanguage]);
 
-  useEffect(()=>{
-
-    if(detectLanguage != selectLanguage){
-      <Alert severity="info">This is an info alert — check it out!</Alert>
+  useEffect(() => {
+    if (detectLanguage != selectLanguage) {
+      <Alert severity="info">This is an info alert — check it out!</Alert>;
     }
-
-  },[input, translation]);
+  }, [input, translation]);
 
   return (
     <>
@@ -82,8 +86,11 @@ export default function Translator() {
                 <CardMedia
                   component="img"
                   height="140"
-                  image="./download.jpg"
-                  alt="green iguana"
+                  src={`https://flagcdn.com/${selectLanguage}.svg`}
+                  srcset={[
+                    `https://flagcdn.com/${selectLanguage}.svg 2x`,
+                    `https://flagcdn.com/${selectLanguage}.svg 3x`,
+                  ]}
                 />
                 <CardContent>
                   <FormControl sx={{ m: 3 }} variant="standard">
@@ -120,8 +127,11 @@ export default function Translator() {
                 <CardMedia
                   component="img"
                   height="140"
-                  image="src\Components\download.jpg"
-                  alt="green iguana"
+                  src={`https://flagcdn.com/${selectLanguageOut}.svg`}
+                  srcset={[
+                    `https://flagcdn.com/${selectLanguageOut}.svg 2x`,
+                    `https://flagcdn.com/${selectLanguageOut}.svg 3x`,
+                  ]}
                 />
                 <CardContent>
                   <FormControl sx={{ m: 2 }} variant="standard">
