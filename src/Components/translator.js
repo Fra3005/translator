@@ -19,8 +19,7 @@ export default function Translator() {
   const [translation, setTranslation] = useState("");
   const [selectLanguage, setSelectedLanguage] = useState("en");
   const [selectLanguageOut, setSelectedLanguageOut] = useState("it");
-  const [api, setApi] = useState(null);
-  const [country, setCountry] = useState("Italy");
+
 
   const detectLanguage = async () => {
     const response = await axios.post(`https://libretranslate.de/detect`, {
